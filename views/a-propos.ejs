@@ -1,0 +1,75 @@
+<%- include('partials/header', { titre: 'À propos', actif: 'apropos', extraHead: '' }) %>
+
+<%
+const equipe = [
+  ["Prénom Nom", "Rôle dans l'équipe"],
+  ["Prénom Nom", "Rôle dans l'équipe"],
+  ["Prénom Nom", "Rôle dans l'équipe"]
+];
+%>
+
+<div class="entete-page">
+  <div class="container">
+    <h1>À propos</h1>
+    <p class="mb-0">Un projet né d'un problème très concret : les arnaques au Mobile Money.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-7">
+        <h2 class="titre-section">Pourquoi ce projet</h2>
+        <p>Au Togo, le Mobile Money est utilisé tous les jours. Les arnaques par SMS et appels falsifiés, comme le faux dépôt « par erreur », les faux concours ou les fausses tontines, touchent beaucoup de personnes, surtout dans le secteur informel.</p>
+        <p>Fraude Scanner permet à n'importe qui de vérifier un message suspect en quelques secondes, avec une explication en français simple.</p>
+        <h2 class="titre-section mt-5">Nos principes</h2>
+        <ul>
+          <li><strong>Une estimation, pas une garantie :</strong> l'appli aide à décider, elle ne certifie jamais un message.</li>
+          <li><strong>Un langage simple :</strong> des phrases courtes, compréhensibles par tous.</li>
+          <li><strong>Des données protégées :</strong> aucun vrai numéro ni donnée personnelle n'est utilisé ou stocké.</li>
+          <li><strong>Gemma au cœur du projet :</strong> elle lit, analyse et explique. Elle n'est pas décorative.</li>
+        </ul>
+      </div>
+      <div class="col-lg-5">
+        <img class="mb-4" src="/assets/img/logo.png" alt="Logo Track Studi" style="max-width: 200px; height: auto;">
+        <div class="carte-info">
+          <h3>Le hackathon</h3>
+          <p class="mb-2"><strong>Build with Gemma</strong></p>
+          <p class="mb-2">Hacktoberfest Hack Day Lomé × LBS CS Club</p>
+          <p class="mb-2">31 octobre 2026, Lomé Business School</p>
+          <p class="mb-0">Sujet : Moov / T-Money Assistant &amp; Fraude Scanner</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="titre-section">Technologies</h2>
+    <div class="row g-4 mt-1">
+      <div class="col-md-3 col-6"><div class="carte-info"><h3>Gemma</h3><p class="mb-0">Lecture, analyse et rédaction des alertes, via l'API Gemini.</p></div></div>
+      <div class="col-md-3 col-6"><div class="carte-info"><h3>Node.js / Express</h3><p class="mb-0">Serveur, logique du scanner et des commandes.</p></div></div>
+      <div class="col-md-3 col-6"><div class="carte-info"><h3>Bootstrap</h3><p class="mb-0">Interface des pages du site.</p></div></div>
+      <div class="col-md-3 col-6"><div class="carte-info"><h3>JavaScript</h3><p class="mb-0">Chat, historique et signalements.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="titre-section">L'équipe</h2>
+    <div class="row g-4 mt-1">
+      <% for (let i = 0; i < equipe.length; i++) { %>
+        <div class="col-md-4">
+          <div class="carte-info">
+            <h3><%= equipe[i][0] %></h3>
+            <p class="mb-0"><%= equipe[i][1] %></p>
+          </div>
+        </div>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

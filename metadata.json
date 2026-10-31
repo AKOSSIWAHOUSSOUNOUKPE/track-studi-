@@ -1,0 +1,7 @@
+{
+  "name": "Fraude Scanner",
+  "description": "Vérifie en quelques secondes si un SMS Mobile Money (T-Money, Moov Money) ressemble à une arnaque.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

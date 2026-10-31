@@ -1,0 +1,131 @@
+<%- include('partials/header', { titre: 'Documentation', actif: 'doc', extraHead: '' }) %>
+
+<div class="entete-page">
+  <div class="container">
+    <h1>Documentation technique</h1>
+    <p class="mb-0">Installer, configurer et comprendre le fonctionnement du projet.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-3 d-none d-lg-block">
+        <div class="list-group doc-menu">
+          <a class="list-group-item list-group-item-action" href="#installation">Installation</a>
+          <a class="list-group-item list-group-item-action" href="#structure">Structure du projet</a>
+          <a class="list-group-item list-group-item-action" href="#api">API du chat</a>
+          <a class="list-group-item list-group-item-action" href="#scanner">Logique du scanner</a>
+          <a class="list-group-item list-group-item-action" href="#apprentissage">Mode apprentissage</a>
+          <a class="list-group-item list-group-item-action" href="#securite">Sécurité et données</a>
+          <a class="list-group-item list-group-item-action" href="#limites">Limites</a>
+        </div>
+      </div>
+      <div class="col-lg-9">
+
+        <div class="doc-bloc" id="installation">
+          <h2>Installation</h2>
+          <p>Application Node.js avec Express, EJS et l'API Gemini / Gemma. Clé API gratuite créée sur <code>aistudio.google.com/apikey</code>.</p>
+<pre class="code">cp .env.example .env
+# ouvre .env et colle ta clé dans GEMINI_API_KEY
+npm install
+npm run dev</pre>
+          <p class="mt-3 mb-0">Puis ouvre <code>http://localhost:3000</code>. Ne publie jamais le fichier <code>.env</code> (il est déjà dans <code>.gitignore</code>).</p>
+        </div>
+
+        <div class="doc-bloc" id="structure">
+          <h2>Structure du projet</h2>
+<pre class="code">fraude-scanner/
+├── public/                 (fichiers statiques : assets/css, images)
+├── views/                  (pages EJS et partials)
+│   ├── index.ejs           page d'accueil
+│   ├── scanner.ejs         le chat
+│   ├── comment-ca-marche.ejs
+│   ├── documentation.ejs
+│   ├── a-propos.ejs
+│   └── partials/           en-tête et pied de page communs
+├── src/
+│   ├── GeminiService.ts    appel à Gemma / Gemini (REST & SDK)
+│   ├── Scanner.ts          analyse des SMS et règles locales
+│   └── Apprendre.ts        commandes /
+├── data/
+│   ├── formats_officiels.json
+│   └── signes_arnaque.json
+├── server.ts               serveur Express principal
+└── .env                    clé API (secrète)</pre>
+        </div>
+
+        <div class="doc-bloc" id="api">
+          <h2>API du chat</h2>
+          <p><code>POST /api/analyser</code> avec un formulaire (<code>multipart/form-data</code>) :</p>
+          <ul>
+            <li><code>message</code> : le texte du SMS ou une commande qui commence par <code>/</code></li>
+            <li><code>image</code> (facultatif) : une capture JPG, PNG ou WEBP de 4 Mo maximum</li>
+          </ul>
+          <p>Réponse pour un verdict :</p>
+<pre class="code">{
+  "type": "verdict",
+  "mode": "scanner",
+  "verdict": "ARNAQUE",
+  "montant": "50 000 F",
+  "expediteur": "numéro personnel",
+  "raisons": ["Demande de renvoyer l'argent"],
+  "conseil": "Ne renvoie rien. Appelle ton opérateur."
+}</pre>
+          <p class="mt-3">Réponse pour une commande :</p>
+<pre class="code">{ "type": "texte", "mode": "apprendre", "texte": "..." }</pre>
+        </div>
+
+        <div class="doc-bloc" id="scanner">
+          <h2>Logique du scanner</h2>
+          <ol>
+            <li>Des règles locales repèrent des mots d'alerte (<code>data/signes_arnaque.json</code>).</li>
+            <li>Gemma lit le texte ou l'image, avec les formats officiels (<code>data/formats_officiels.json</code>) dans sa consigne, et répond en JSON.</li>
+            <li>Le niveau de risque est converti en verdict.</li>
+          </ol>
+          <div class="table-responsive">
+            <table class="table table-bordered bg-white">
+              <thead class="table-light"><tr><th>Niveau de Gemma</th><th>Verdict affiché</th></tr></thead>
+              <tbody>
+                <tr><td>élevé</td><td><span class="pastille bg-danger2">ARNAQUE</span></td></tr>
+                <tr><td>moyen</td><td><span class="pastille bg-moyen">SUSPECT</span></td></tr>
+                <tr><td>faible</td><td><span class="pastille bg-ok">LÉGITIME</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p><strong>Prudence :</strong> si Gemma répond « faible » mais que le message ne ressemble pas à un SMS officiel, ou que plusieurs signes d'alerte sont repérés, le verdict passe à « suspect ». Si Gemma ne répond pas, un résultat partiel s'affiche, jamais « légitime ».</p>
+          <p class="mb-0">Le contenu du SMS est traité comme une donnée : les instructions qu'il pourrait contenir ne sont pas suivies.</p>
+        </div>
+
+        <div class="doc-bloc" id="apprentissage">
+          <h2>Mode apprentissage</h2>
+          <p><code>/api/analyser</code> regarde le premier caractère du message. S'il s'agit de <code>/</code>, la classe <code>Apprendre</code> traite la commande. Sinon, le message va au scanner, quel que soit le mode.</p>
+          <p class="mb-0">Le cours, la question en cours et le score sont gardés dans la session de l'utilisateur. Les commandes sont décrites sur la page <a href="/comment-ca-marche#apprentissage">Comment ça marche</a>.</p>
+        </div>
+
+        <div class="doc-bloc" id="securite">
+          <h2>Sécurité et données</h2>
+          <ul class="mb-0">
+            <li>La clé API reste dans <code>.env</code>, hors du dossier public.</li>
+            <li>Les images sont vérifiées (type réel et taille) et ne sont jamais enregistrées sur le disque.</li>
+            <li>Avec un compte Supabase, seuls le verdict, la date et un extrait limité à 70 caractères sont synchronisés; le SMS complet et les images ne sont pas stockés dans Supabase.</li>
+            <li>Les analyses sans compte et les signalements restent dans le navigateur de l'utilisateur.</li>
+            <li>La clé publishable Supabase est utilisée avec RLS. Ne mets jamais une clé <code>secret</code> ou <code>service_role</code> dans le navigateur.</li>
+          </ul>
+        </div>
+
+        <div class="doc-bloc" id="limites">
+          <h2>Limites</h2>
+          <ul class="mb-0">
+            <li>Le résultat est une estimation du risque, pas une certification.</li>
+            <li>Les formats officiels de <code>formats_officiels.json</code> sont des modèles à compléter avec de vrais SMS anonymisés.</li>
+            <li>Les cours au format PDF ne sont pas encore lus : utilise du texte collé ou une photo.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

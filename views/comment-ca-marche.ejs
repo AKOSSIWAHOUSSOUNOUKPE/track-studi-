@@ -1,0 +1,78 @@
+<%- include('partials/header', { titre: 'Comment ça marche', actif: 'usage', extraHead: '' }) %>
+
+<div class="entete-page">
+  <div class="container">
+    <h1>Comment utiliser Fraude Scanner</h1>
+    <p class="mb-0">Un guide en quelques étapes, de la réception du SMS jusqu'à la bonne décision.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5">
+      <div class="col-lg-6">
+        <div class="d-flex gap-3 mb-4"><span class="etape-num">1</span><div><h2 class="h5 fw-bold">Ouvre le scanner</h2><p class="mb-0">Clique sur « Analyser un SMS » en haut de la page. Un chat s'ouvre avec un message de bienvenue.</p></div></div>
+        <div class="d-flex gap-3 mb-4"><span class="etape-num">2</span><div><h2 class="h5 fw-bold">Envoie le message suspect</h2><p class="mb-0">Colle le texte du SMS dans la zone de saisie, ou clique sur le bouton trombone pour joindre une capture d'écran. Puis appuie sur la flèche pour envoyer.</p></div></div>
+        <div class="d-flex gap-3 mb-4"><span class="etape-num">3</span><div><h2 class="h5 fw-bold">Lis le verdict</h2><p class="mb-0">Une carte colorée s'affiche avec le montant, l'expéditeur, les raisons du verdict et un conseil.</p></div></div>
+        <div class="d-flex gap-3 mb-4"><span class="etape-num">4</span><div><h2 class="h5 fw-bold">Agis avec prudence</h2><p class="mb-0">Si le message est suspect, ne renvoie rien. Vérifie dans l'application officielle de ton opérateur ou appelle-le.</p></div></div>
+        <div class="d-flex gap-3"><span class="etape-num">5</span><div><h2 class="h5 fw-bold">Signale et retrouve ton historique</h2><p class="mb-0">Le bouton « Signaler comme arnaque » et le bouton « Historique » te permettent de garder une trace de tes analyses.</p></div></div>
+      </div>
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-sm-6"><img class="capture" src="/assets/img/capture_accueil.png" alt="Page d'accueil du chat"><p class="small text-muted mt-2">Le chat à l'ouverture</p></div>
+          <div class="col-sm-6"><img class="capture" src="/assets/img/capture_verdict.png" alt="Carte de verdict arnaque"><p class="small text-muted mt-2">Un verdict « arnaque »</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="titre-section">Comprendre les couleurs</h2>
+    <p class="sous-titre">Le verdict est une estimation du risque. Il ne remplace pas une vérification auprès de ton opérateur.</p>
+    <div class="row g-4">
+      <div class="col-md-4"><div class="carte-info"><span class="pastille bg-danger2 mb-2">Rouge : arnaque</span><p class="mb-0">Plusieurs signes d'arnaque. Ne réponds pas, ne renvoie rien, ne donne aucun code.</p></div></div>
+      <div class="col-md-4"><div class="carte-info"><span class="pastille bg-moyen mb-2">Orange : suspect</span><p class="mb-0">Un doute reste. Vérifie ton solde dans l'application officielle avant toute action.</p></div></div>
+      <div class="col-md-4"><div class="carte-info"><span class="pastille bg-ok mb-2">Vert : légitime</span><p class="mb-0">Peu de signes de risque. Reste prudent : ne partage jamais ton code secret.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="apprentissage">
+  <div class="container">
+    <h2 class="titre-section">Le mode apprentissage</h2>
+    <p class="sous-titre">Il ne démarre que si ton message commence par <code>/</code>. Sans commande, tu restes dans le scanner.</p>
+    <div class="table-responsive">
+      <table class="table table-bordered bg-white align-middle">
+        <thead class="table-light"><tr><th>Commande</th><th>Ce qu'elle fait</th></tr></thead>
+        <tbody>
+          <tr><td><code>/apprendre</code></td><td>Active le mode. Ajoute ton cours : colle le texte après la commande, ou joins une photo.</td></tr>
+          <tr><td><code>/resume</code></td><td>Résume le cours en quelques points et donne des mots clés.</td></tr>
+          <tr><td><code>/plan 5</code></td><td>Crée un programme de révision sur 5 jours (3 jours par défaut).</td></tr>
+          <tr><td><code>/quiz</code></td><td>Pose une question sur ton cours.</td></tr>
+          <tr><td><code>/reponse ...</code></td><td>Envoie ta réponse à la question. L'appli la corrige et tient ton score.</td></tr>
+          <tr><td><code>/stop</code></td><td>Quitte le mode apprentissage et revient au scanner.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="titre-section">Questions fréquentes</h2>
+    <div class="accordion mt-4" id="faq">
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q1">Le verdict est-il garanti ?</button></h3>
+        <div id="q1" class="accordion-collapse collapse show" data-bs-parent="#faq"><div class="accordion-body">Non. C'est une estimation du risque, faite à partir du contenu du message. En cas de doute, vérifie auprès de ton opérateur.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q2">Mes captures d'écran sont-elles enregistrées ?</button></h3>
+        <div id="q2" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Non. L'image est envoyée pour analyse, puis elle n'est pas gardée sur le serveur.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q3">Que faire si j'ai déjà renvoyé de l'argent ?</button></h3>
+        <div id="q3" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Contacte vite ton opérateur par son numéro officiel et garde le message comme preuve.</div></div></div>
+      <div class="accordion-item"><h3 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#q4">Dois-je donner de vrais numéros pour tester ?</button></h3>
+        <div id="q4" class="accordion-collapse collapse" data-bs-parent="#faq"><div class="accordion-body">Non. Utilise des messages d'exemple ou anonymisés, et ne partage jamais de vrais codes secrets.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/footer') %>

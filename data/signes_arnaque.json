@@ -1,0 +1,19 @@
+{
+  "signes": [
+    "renvoyez", "renvoyer", "par erreur", "erreur de transfert",
+    "felicitations", "félicitations", "gagné", "gagne", "gagné(e)",
+    "lot", "prix", "concours", "million", "gros lot",
+    "frais", "frais de transfert", "frais d'activation",
+    "débloquer", "debloquer", "bloqué", "bloque", "bloquée",
+    "code secret", "code pin", "code confidentiel", "confirmez",
+    "vérifiez votre identité", "verifiez votre identite",
+    "urgent", "vite", "immédiatement", "immediatement", "sans délai",
+    "compte suspendu", "compte bloqué", "desactivé", "désactivé",
+    "tontine", "tontine en ligne", "investissement", "doubler", "tripler",
+    "appelez le", "contactez le", "numéro whatsapp", "whatsapp",
+    "ministère", "banque centrale", "remboursement",
+    "transfert incomplet", "validation", "activation",
+    "préserver votre compte", "probleme", "problème",
+    "sinon", "dernière étape", "derniere etape"
+  ]
+}

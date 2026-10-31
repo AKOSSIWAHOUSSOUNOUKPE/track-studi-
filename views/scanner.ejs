@@ -1,0 +1,793 @@
+<%- include('partials/header', {
+  titre: 'Scanner',
+  actif: 'scanner',
+  extraHead: `
+<style>
+:root {
+  --fond: #F5F8FD;
+  --encre: #000B28;
+  --encre-douce: #5A6785;
+  --vert: #00144A;
+  --vert-clair: #E5F0FD;
+  --jaune: #006FF2;
+  --vert-ok: #1F7A3E;
+  --orange: #C26A12;
+  --rouge: #B8302A;
+  --bulle-bot: #FFFFFF;
+  --ligne: #D7DEEB;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: "Bricolage Grotesque", "Segoe UI", Arial, sans-serif;
+  background: var(--fond);
+  color: var(--encre);
+  display: flex;
+  justify-content: center;
+}
+.app {
+  width: 100%;
+  max-width: 720px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--fond);
+  border-left: 1px solid var(--ligne);
+  border-right: 1px solid var(--ligne);
+}
+
+/* En-tête */
+header {
+  background: var(--vert);
+  color: #fff;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 4px solid var(--jaune);
+}
+.logo {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--jaune);
+  color: var(--vert);
+  display: grid; place-items: center;
+  font-weight: 700; font-size: 20px;
+  flex-shrink: 0;
+}
+.titre { flex: 1; min-width: 0; }
+.titre h1 { font-size: 17px; font-weight: 700; }
+.titre p { font-size: 13px; opacity: .85; }
+#badge-mode {
+  font-size: 13px; font-weight: 500;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.16);
+  white-space: nowrap;
+}
+#badge-mode.apprendre { background: #fff; color: var(--vert); }
+
+/* Messages */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.ligne { display: flex; }
+.ligne.user { justify-content: flex-end; }
+.bulle {
+  max-width: 86%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 15.5px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.user .bulle {
+  background: var(--vert);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.bot .bulle {
+  background: var(--bulle-bot);
+  border: 1px solid var(--ligne);
+  border-bottom-left-radius: 4px;
+}
+.bulle img {
+  display: block;
+  max-width: 220px;
+  max-height: 260px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+
+/* Carte de verdict */
+.carte { max-width: 92%; background: #fff; border: 1px solid var(--ligne); border-radius: 16px; border-bottom-left-radius: 4px; overflow: hidden; }
+.carte-tete { padding: 12px 16px; color: #fff; font-weight: 700; font-size: 18px; }
+.carte.legitime .carte-tete { background: var(--vert-ok); }
+.carte.suspect .carte-tete { background: var(--orange); }
+.carte.arnaque .carte-tete { background: var(--rouge); }
+.carte-corps { padding: 12px 16px 14px; font-size: 15px; line-height: 1.5; }
+.infos { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; }
+.infos div { font-size: 14px; color: var(--encre-douce); }
+.infos strong { display: block; color: var(--encre); font-size: 15px; }
+.carte-corps h3 { font-size: 14px; margin: 8px 0 4px; }
+.carte-corps ul { padding-left: 20px; }
+.conseil { margin-top: 10px; padding: 10px 12px; background: var(--vert-clair); border-radius: 10px; font-weight: 500; }
+
+/* Indicateur de saisie */
+.points { display: inline-flex; gap: 5px; padding: 4px 0; }
+.points span { width: 8px; height: 8px; border-radius: 50%; background: var(--encre-douce); opacity: .35; animation: saut 1s infinite; }
+.points span:nth-child(2) { animation-delay: .15s; }
+.points span:nth-child(3) { animation-delay: .3s; }
+@keyframes saut { 0%, 80%, 100% { opacity: .3; } 40% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .points span { animation: none; opacity: .6; } }
+
+/* Commandes rapides */
+#rapides {
+  padding: 8px 16px 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+.puce {
+  flex-shrink: 0;
+  font: inherit;
+  font-size: 14px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid var(--vert);
+  background: #fff;
+  color: var(--vert);
+  cursor: pointer;
+}
+.puce:hover { background: var(--vert-clair); }
+.puce.exemple { border-color: var(--orange); color: var(--orange); }
+
+/* Zone de saisie */
+#apercu { display: none; padding: 8px 16px 0; align-items: center; gap: 10px; font-size: 14px; color: var(--encre-douce); }
+#apercu img { width: 48px; height: 48px; object-fit: cover; border-radius: 8px; }
+#apercu button { margin-left: auto; font: inherit; border: none; background: none; color: var(--rouge); cursor: pointer; }
+form {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 10px 16px 8px;
+}
+#saisie {
+  flex: 1;
+  font: inherit;
+  font-size: 16px;
+  padding: 11px 14px;
+  border: 1px solid var(--ligne);
+  border-radius: 22px;
+  resize: none;
+  max-height: 120px;
+  background: #fff;
+  color: var(--encre);
+}
+#saisie:focus, button:focus-visible { outline: 3px solid var(--jaune); outline-offset: 1px; }
+.rond {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+#btn-image { background: #fff; border: 1px solid var(--ligne); color: var(--vert); }
+#btn-envoyer { background: var(--vert); color: #fff; }
+#btn-envoyer:disabled { opacity: .5; cursor: not-allowed; }
+.rappel { text-align: center; font-size: 12.5px; color: var(--encre-douce); padding: 0 16px 10px; }
+#panneau { padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--ligne); max-height: 230px; overflow-y: auto; font-size: 14px; }
+#panneau[hidden] { display: none; }
+#stats { font-weight: 500; margin-bottom: 8px; }
+#liste { list-style: none; margin-bottom: 8px; }
+#liste li { padding: 6px 0; border-bottom: 1px solid var(--ligne); display: flex; gap: 8px; align-items: baseline; }
+#compte-panel { padding: 12px 16px; background: #fff; border-bottom: 1px solid var(--ligne); font-size: 14px; }
+#compte-panel[hidden] { display: none; }
+#compte-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+#compte-form input { min-width: 150px; flex: 1; padding: 7px 10px; border: 1px solid var(--ligne); border-radius: 8px; }
+#compte-status { margin: 0 0 8px; color: var(--encre-douce); }
+#compte-status.erreur { color: var(--rouge); }
+.tag { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 999px; color: #fff; flex-shrink: 0; }
+.tag.ARNAQUE { background: var(--rouge); }
+.tag.SUSPECT { background: var(--orange); }
+.tag.LEGITIME { background: var(--vert-ok); }
+.histo { border: none; background: rgba(255,255,255,.16); color: #fff; padding: 5px 11px; font-size: 13px; }
+.histo:hover { background: rgba(255,255,255,.3); }
+.note { margin-top: 10px; font-size: 13px; color: var(--encre-douce); }
+.signal { margin-top: 8px; border-color: var(--rouge); color: var(--rouge); }
+
+body { display: block; }
+.logo { background: #fff; padding: 3px; }
+.logo img { width: 100%; height: 100%; object-fit: contain; }
+.chat-wrap { display: flex; justify-content: center; }
+.app { height: calc(100vh - 62px); }
+:where(.app) p, :where(.app) h1 { margin: 0; }
+</style>
+`
+}) %>
+
+<div class="chat-wrap">
+<div class="app">
+
+  <header>
+    <div class="logo"><img src="/assets/img/logo-icone.png" alt="Track Studi"></div>
+    <div class="titre">
+      <h1>Fraude Scanner</h1>
+      <p>Moov Money et T-Money</p>
+    </div>
+    <div id="badge-mode">Mode scanner</div>
+    <button type="button" id="btn-compte" class="puce histo">Compte</button>
+    <button type="button" id="btn-histo" class="puce histo">Historique</button>
+  </header>
+
+  <div id="compte-panel" hidden>
+    <p id="compte-status" aria-live="polite">Connexion Supabase en cours…</p>
+    <form id="compte-form">
+      <label class="visually-hidden" for="compte-email">Adresse e-mail</label>
+      <input id="compte-email" type="email" autocomplete="email" placeholder="Adresse e-mail" required>
+      <label class="visually-hidden" for="compte-password">Mot de passe</label>
+      <input id="compte-password" type="password" autocomplete="current-password" placeholder="Mot de passe (6 caractères minimum)" minlength="6" required>
+      <button type="button" id="btn-connexion" class="puce">Se connecter</button>
+      <button type="button" id="btn-inscription" class="puce">Créer un compte</button>
+      <button type="button" id="btn-deconnexion" class="puce" hidden>Se déconnecter</button>
+    </form>
+  </div>
+
+  <div id="panneau" hidden>
+    <div id="stats"></div>
+    <ul id="liste"></ul>
+    <button type="button" id="effacer" class="puce">Effacer l'historique</button>
+  </div>
+
+  <div id="messages" aria-live="polite"></div>
+
+  <div id="rapides"></div>
+
+  <div id="apercu">
+    <img id="apercu-img" alt="Capture jointe">
+    <span id="apercu-nom"></span>
+    <button type="button" id="apercu-retirer">Retirer</button>
+  </div>
+
+  <form id="formulaire">
+    <button type="button" class="rond" id="btn-image" aria-label="Joindre une capture d'écran">📎</button>
+    <input type="file" id="fichier" accept="image/*" hidden>
+    <textarea id="saisie" rows="1" placeholder="Colle un SMS ou tape /commande" aria-label="Message"></textarea>
+    <button type="submit" class="rond" id="btn-envoyer" aria-label="Envoyer">➤</button>
+  </form>
+  <p class="rappel">Ne partage jamais de vrais codes secrets ni de vrais numéros.</p>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.1/dist/umd/supabase.js"></script>
+<script>
+// ---------- Éléments de la page ----------
+var zoneMessages = document.getElementById("messages");
+var formulaire = document.getElementById("formulaire");
+var saisie = document.getElementById("saisie");
+var btnEnvoyer = document.getElementById("btn-envoyer");
+var btnImage = document.getElementById("btn-image");
+var champFichier = document.getElementById("fichier");
+var zoneApercu = document.getElementById("apercu");
+var apercuImg = document.getElementById("apercu-img");
+var apercuNom = document.getElementById("apercu-nom");
+var badgeMode = document.getElementById("badge-mode");
+var zoneRapides = document.getElementById("rapides");
+
+var imageJointe = null;
+var clientSupabase = null;
+var utilisateurConnecte = null;
+var synchronisationEnCours = Promise.resolve();
+
+var commandes = ["/apprendre", "/plan", "/quiz", "/resume", "/stop"];
+
+// ---------- Boutons rapides ----------
+function creerPuce(texte, classe) {
+  var b = document.createElement("button");
+  b.type = "button";
+  b.className = "puce " + (classe || "");
+  b.textContent = texte;
+  return b;
+}
+
+for (var j = 0; j < commandes.length; j++) {
+  (function (cmd) {
+    var puce = creerPuce(cmd);
+    puce.addEventListener("click", function () {
+      envoyer(cmd);
+    });
+    zoneRapides.appendChild(puce);
+  })(commandes[j]);
+}
+
+// ---------- Affichage des messages ----------
+function defiler() {
+  zoneMessages.scrollTop = zoneMessages.scrollHeight;
+}
+
+function ajouterMessageUtilisateur(texte, urlImage) {
+  var ligne = document.createElement("div");
+  ligne.className = "ligne user";
+  var bulle = document.createElement("div");
+  bulle.className = "bulle";
+  if (urlImage) {
+    var img = document.createElement("img");
+    img.src = urlImage;
+    img.alt = "Capture envoyée";
+    bulle.appendChild(img);
+  }
+  if (texte) {
+    bulle.appendChild(document.createTextNode(texte));
+  }
+  ligne.appendChild(bulle);
+  zoneMessages.appendChild(ligne);
+  defiler();
+}
+
+function ajouterMessageBot(texte) {
+  var ligne = document.createElement("div");
+  ligne.className = "ligne bot";
+  var bulle = document.createElement("div");
+  bulle.className = "bulle";
+  bulle.textContent = texte;
+  ligne.appendChild(bulle);
+  zoneMessages.appendChild(ligne);
+  defiler();
+}
+
+function ajouterListe(parent, titre, elements) {
+  if (!elements || elements.length === 0) { return; }
+  var h = document.createElement("h3");
+  h.textContent = titre;
+  parent.appendChild(h);
+  var ul = document.createElement("ul");
+  for (var k = 0; k < elements.length; k++) {
+    var li = document.createElement("li");
+    li.textContent = elements[k];
+    ul.appendChild(li);
+  }
+  parent.appendChild(ul);
+}
+
+function ajouterCarteVerdict(d) {
+  var ligne = document.createElement("div");
+  ligne.className = "ligne bot";
+
+  var verdict = (d.verdict || "SUSPECT").toUpperCase();
+  var classe = "suspect";
+  var titre = "Message suspect";
+  if (verdict === "LEGITIME" || verdict === "LÉGITIME") { classe = "legitime"; titre = "Message légitime"; }
+  if (verdict === "ARNAQUE") { classe = "arnaque"; titre = "Attention : arnaque !"; }
+
+  var carte = document.createElement("div");
+  carte.className = "carte " + classe;
+
+  var tete = document.createElement("div");
+  tete.className = "carte-tete";
+  tete.textContent = titre;
+  carte.appendChild(tete);
+
+  var corps = document.createElement("div");
+  corps.className = "carte-corps";
+
+  var infos = document.createElement("div");
+  infos.className = "infos";
+  var champs = [["Montant", d.montant], ["Expéditeur", d.expediteur]];
+  for (var m = 0; m < champs.length; m++) {
+    if (champs[m][1]) {
+      var bloc = document.createElement("div");
+      bloc.textContent = champs[m][0];
+      var fort = document.createElement("strong");
+      fort.textContent = champs[m][1];
+      bloc.appendChild(fort);
+      infos.appendChild(bloc);
+    }
+  }
+  if (infos.children.length > 0) { corps.appendChild(infos); }
+
+  ajouterListe(corps, "Pourquoi ?", d.raisons);
+
+  if (d.conseil) {
+    var conseil = document.createElement("div");
+    conseil.className = "conseil";
+    conseil.textContent = d.conseil;
+    corps.appendChild(conseil);
+  }
+
+  var note = document.createElement("p");
+  note.className = "note";
+  note.textContent = "Estimation du risque, pas une garantie. Vérifie toujours dans l'application officielle.";
+  corps.appendChild(note);
+
+  if (classe !== "legitime") {
+    var bSignal = creerPuce("Signaler comme arnaque", "signal");
+    bSignal.addEventListener("click", function () {
+      var s = lire(cleSignal);
+      s.push({ verdict: verdict });
+      ecrire(cleSignal, s);
+      bSignal.disabled = true;
+      bSignal.textContent = "Signalé, merci !";
+      majPanneau();
+    });
+    corps.appendChild(bSignal);
+  }
+
+  carte.appendChild(corps);
+  ligne.appendChild(carte);
+  zoneMessages.appendChild(ligne);
+  defiler();
+}
+
+// ---------- Indicateur « en train d'écrire » ----------
+var ligneAttente = null;
+
+function afficherAttente() {
+  ligneAttente = document.createElement("div");
+  ligneAttente.className = "ligne bot";
+  var bulle = document.createElement("div");
+  bulle.className = "bulle";
+  var points = document.createElement("span");
+  points.className = "points";
+  for (var p = 0; p < 3; p++) { points.appendChild(document.createElement("span")); }
+  bulle.appendChild(points);
+  ligneAttente.appendChild(bulle);
+  zoneMessages.appendChild(ligneAttente);
+  defiler();
+}
+
+function retirerAttente() {
+  if (ligneAttente) {
+    zoneMessages.removeChild(ligneAttente);
+    ligneAttente = null;
+  }
+}
+
+// ---------- Mode (scanner / apprentissage) ----------
+function changerMode(mode) {
+  if (mode === "apprendre") {
+    badgeMode.textContent = "Mode apprentissage";
+    badgeMode.className = "apprendre";
+  } else {
+    badgeMode.textContent = "Mode scanner";
+    badgeMode.className = "";
+  }
+}
+
+// ---------- Capture d'écran jointe ----------
+btnImage.addEventListener("click", function () { champFichier.click(); });
+
+champFichier.addEventListener("change", function () {
+  if (champFichier.files.length > 0) {
+    imageJointe = champFichier.files[0];
+    apercuImg.src = URL.createObjectURL(imageJointe);
+    apercuNom.textContent = imageJointe.name;
+    zoneApercu.style.display = "flex";
+  }
+});
+
+document.getElementById("apercu-retirer").addEventListener("click", retirerImage);
+
+function retirerImage() {
+  imageJointe = null;
+  champFichier.value = "";
+  zoneApercu.style.display = "none";
+}
+
+// ---------- Envoi au serveur ----------
+function envoyer(texteForce) {
+  var texte = (texteForce !== undefined ? texteForce : saisie.value).trim();
+  if (texte === "" && !imageJointe) { return; }
+
+  var urlImage = imageJointe ? URL.createObjectURL(imageJointe) : null;
+  ajouterMessageUtilisateur(texte, urlImage);
+
+  var donnees = new FormData();
+  donnees.append("message", texte);
+  if (imageJointe) { donnees.append("image", imageJointe); }
+
+  saisie.value = "";
+  saisie.style.height = "auto";
+  retirerImage();
+  btnEnvoyer.disabled = true;
+  afficherAttente();
+
+  fetch("/api/analyser", { method: "POST", body: donnees })
+    .then(function (reponse) {
+      if (!reponse.ok) { throw new Error("Erreur serveur " + reponse.status); }
+      return reponse.json();
+    })
+    .then(function (d) {
+      retirerAttente();
+      if (d.mode) { changerMode(d.mode); }
+      if (d.type === "verdict") {
+        ajouterCarteVerdict(d);
+        enregistrer(d, texte);
+      } else {
+        ajouterMessageBot(d.texte || "Réponse vide.");
+      }
+    })
+    .catch(function () {
+      retirerAttente();
+      ajouterMessageBot("Je n'ai pas pu analyser ce message. Vérifie ta connexion puis réessaie.");
+    })
+    .then(function () {
+      btnEnvoyer.disabled = false;
+      saisie.focus();
+    });
+}
+
+formulaire.addEventListener("submit", function (e) {
+  e.preventDefault();
+  envoyer();
+});
+
+saisie.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    envoyer();
+  }
+});
+
+saisie.addEventListener("input", function () {
+  saisie.style.height = "auto";
+  saisie.style.height = Math.min(saisie.scrollHeight, 120) + "px";
+});
+
+// ---------- Historique, signalements, statistiques (stockés dans le navigateur) ----------
+var cleHisto = "fs_histo";
+var cleSignal = "fs_signal";
+
+function lire(cle) {
+  try { var v = localStorage.getItem(cle); return v ? JSON.parse(v) : []; } catch (e) { return []; }
+}
+function ecrire(cle, valeur) {
+  try { localStorage.setItem(cle, JSON.stringify(valeur)); } catch (e) {}
+}
+
+function enregistrer(d, texte) {
+  var h = lire(cleHisto);
+  var entree = {
+    client_id: nouvelId(),
+    created_at: new Date().toISOString(),
+    verdict: (d.verdict || "SUSPECT").toUpperCase(),
+    extrait: limiterExtrait(texte || "Capture d'écran")
+  };
+  h.unshift(entree);
+  ecrire(cleHisto, h.slice(0, 30));
+  majPanneau();
+  if (utilisateurConnecte && clientSupabase) {
+    synchronisationEnCours = synchronisationEnCours.then(function () {
+      return sauvegarderEntrees([entree]);
+    }).catch(function (erreur) {
+      afficherStatutCompte("Analyse conservée sur cet appareil, mais non synchronisée : " + erreur.message, true);
+    });
+  }
+}
+
+function nouvelId() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+  var octets = new Uint8Array(16);
+  window.crypto.getRandomValues(octets);
+  octets[6] = (octets[6] & 15) | 64;
+  octets[8] = (octets[8] & 63) | 128;
+  var hex = Array.prototype.map.call(octets, function (n) { return n.toString(16).padStart(2, "0"); }).join("");
+  return hex.slice(0, 8) + "-" + hex.slice(8, 12) + "-" + hex.slice(12, 16) + "-" + hex.slice(16, 20) + "-" + hex.slice(20);
+}
+
+function afficherStatutCompte(message, erreur) {
+  var statut = document.getElementById("compte-status");
+  statut.textContent = message;
+  statut.className = erreur ? "erreur" : "";
+}
+
+function limiterExtrait(texte) {
+  return Array.from(String(texte)).slice(0, 70).join("");
+}
+
+function normaliserEntreesLocales() {
+  var h = lire(cleHisto);
+  var modifie = false;
+  h = h.map(function (entree) {
+    if (!entree.client_id) { entree.client_id = nouvelId(); modifie = true; }
+    if (!entree.created_at) { entree.created_at = new Date().toISOString(); modifie = true; }
+    entree.extrait = limiterExtrait(entree.extrait || "Capture d'écran");
+    return entree;
+  });
+  if (modifie) { ecrire(cleHisto, h); }
+  return h.slice(0, 30);
+}
+
+function sauvegarderEntrees(entrees) {
+  if (entrees.length === 0) { return Promise.resolve(); }
+  var lignes = entrees.map(function (entree) {
+    return {
+      user_id: utilisateurConnecte.id,
+      client_id: entree.client_id,
+      verdict: entree.verdict,
+      excerpt: limiterExtrait(entree.extrait || ""),
+      created_at: entree.created_at
+    };
+  });
+  return clientSupabase.from("scan_history").upsert(lignes, {
+    onConflict: "user_id,client_id",
+    ignoreDuplicates: true
+  })
+    .then(function (resultat) {
+      if (resultat.error) { throw resultat.error; }
+    });
+}
+
+function synchroniserHistorique() {
+  if (!clientSupabase || !utilisateurConnecte) { return Promise.resolve(); }
+  var entreesLocales = normaliserEntreesLocales();
+  var utilisateurImporte = localStorage.getItem("fs_local_imported_user");
+  var importPromise = utilisateurImporte === utilisateurConnecte.id
+    ? sauvegarderEntrees(entreesLocales)
+    : utilisateurImporte
+    ? Promise.resolve()
+    : sauvegarderEntrees(entreesLocales).then(function () {
+        localStorage.setItem("fs_local_imported_user", utilisateurConnecte.id);
+      });
+
+  return importPromise.then(function () {
+    return clientSupabase.from("scan_history")
+      .select("client_id,verdict,excerpt,created_at")
+      .eq("user_id", utilisateurConnecte.id)
+      .order("created_at", { ascending: false })
+      .limit(30);
+  }).then(function (resultat) {
+    if (resultat.error) { throw resultat.error; }
+    var historique = resultat.data.map(function (ligne) {
+      return {
+        client_id: ligne.client_id,
+        created_at: ligne.created_at,
+        verdict: ligne.verdict,
+        extrait: ligne.excerpt
+      };
+    });
+    ecrire(cleHisto, historique);
+    majPanneau();
+    afficherStatutCompte("Connecté : " + utilisateurConnecte.email + ". Historique synchronisé.");
+  });
+}
+
+function initialiserSupabase() {
+  fetch("/api/supabase-config")
+    .then(function (reponse) {
+      return reponse.json().then(function (configuration) {
+        if (!reponse.ok) { throw new Error(configuration.error || "Configuration Supabase indisponible."); }
+        return configuration;
+      });
+    })
+    .then(function (configuration) {
+      if (!window.supabase || !window.supabase.createClient) {
+        throw new Error("La bibliothèque Supabase n'a pas pu être chargée.");
+      }
+      clientSupabase = window.supabase.createClient(configuration.url, configuration.publishableKey);
+      clientSupabase.auth.onAuthStateChange(function (_evenement, session) {
+        utilisateurConnecte = session ? session.user : null;
+        document.getElementById("btn-deconnexion").hidden = !utilisateurConnecte;
+        document.getElementById("btn-connexion").hidden = !!utilisateurConnecte;
+        document.getElementById("btn-inscription").hidden = !!utilisateurConnecte;
+        document.getElementById("compte-email").hidden = !!utilisateurConnecte;
+        document.getElementById("compte-password").hidden = !!utilisateurConnecte;
+        if (utilisateurConnecte) {
+          synchronisationEnCours = synchronisationEnCours.then(synchroniserHistorique).catch(function (erreur) {
+            afficherStatutCompte("Connexion réussie, mais la synchronisation a échoué : " + erreur.message, true);
+          });
+        } else {
+          afficherStatutCompte("Connecte-toi pour synchroniser ton historique entre appareils.");
+        }
+      });
+    })
+    .catch(function (erreur) {
+      afficherStatutCompte(erreur.message, true);
+    });
+}
+
+document.getElementById("btn-compte").addEventListener("click", function () {
+  var panneau = document.getElementById("compte-panel");
+  panneau.hidden = !panneau.hidden;
+});
+
+document.getElementById("btn-connexion").addEventListener("click", function () {
+  if (!clientSupabase) { afficherStatutCompte("Supabase n'est pas configuré.", true); return; }
+  var email = document.getElementById("compte-email").value.trim();
+  var password = document.getElementById("compte-password").value;
+  clientSupabase.auth.signInWithPassword({ email: email, password: password }).then(function (resultat) {
+    if (resultat.error) { throw resultat.error; }
+    afficherStatutCompte("Connexion réussie. Synchronisation de l'historique…");
+  }).catch(function (erreur) {
+    afficherStatutCompte("Connexion impossible : " + erreur.message, true);
+  });
+});
+
+document.getElementById("btn-inscription").addEventListener("click", function () {
+  if (!clientSupabase) { afficherStatutCompte("Supabase n'est pas configuré.", true); return; }
+  var email = document.getElementById("compte-email").value.trim();
+  var password = document.getElementById("compte-password").value;
+  clientSupabase.auth.signUp({ email: email, password: password }).then(function (resultat) {
+    if (resultat.error) { throw resultat.error; }
+    if (!resultat.data.session) {
+      afficherStatutCompte("Compte créé. Vérifie ta boîte e-mail pour confirmer l'inscription.");
+    } else {
+      afficherStatutCompte("Compte créé. Synchronisation de l'historique…");
+    }
+  }).catch(function (erreur) {
+    afficherStatutCompte("Création du compte impossible : " + erreur.message, true);
+  });
+});
+
+document.getElementById("btn-deconnexion").addEventListener("click", function () {
+  if (!clientSupabase) { return; }
+  clientSupabase.auth.signOut().then(function (resultat) {
+    if (resultat.error) { throw resultat.error; }
+    afficherStatutCompte("Déconnexion réussie.");
+  }).catch(function (erreur) {
+    afficherStatutCompte("Déconnexion impossible : " + erreur.message, true);
+  });
+});
+
+function majPanneau() {
+  var h = lire(cleHisto);
+  var s = lire(cleSignal);
+  var arnaques = 0;
+  var liste = document.getElementById("liste");
+  liste.innerHTML = "";
+  for (var i = 0; i < h.length; i++) {
+    var v = h[i].verdict.replace("É", "E");
+    if (v === "ARNAQUE") { arnaques = arnaques + 1; }
+    var li = document.createElement("li");
+    var tag = document.createElement("span");
+    tag.className = "tag " + v;
+    tag.textContent = v === "LEGITIME" ? "Faible" : (v === "ARNAQUE" ? "Élevé" : "Moyen");
+    li.appendChild(tag);
+    li.appendChild(document.createTextNode(h[i].extrait));
+    liste.appendChild(li);
+  }
+  document.getElementById("stats").textContent = h.length + " analyses, " + arnaques + " arnaques, " + s.length + " signalements";
+}
+
+document.getElementById("btn-histo").addEventListener("click", function () {
+  var p = document.getElementById("panneau");
+  p.hidden = !p.hidden;
+});
+document.getElementById("effacer").addEventListener("click", function () {
+  var effacerLocalement = function () {
+    ecrire(cleHisto, []);
+    ecrire(cleSignal, []);
+    majPanneau();
+  };
+  if (!utilisateurConnecte || !clientSupabase) {
+    effacerLocalement();
+    return;
+  }
+  clientSupabase.from("scan_history").delete().eq("user_id", utilisateurConnecte.id)
+    .then(function (resultat) {
+      if (resultat.error) { throw resultat.error; }
+      effacerLocalement();
+      afficherStatutCompte("Historique supprimé sur cet appareil et dans Supabase.");
+    })
+    .catch(function (erreur) {
+      afficherStatutCompte("Impossible de supprimer l'historique Supabase : " + erreur.message, true);
+    });
+});
+majPanneau();
+initialiserSupabase();
+
+// ---------- Message d'accueil ----------
+ajouterMessageBot("Bonjour ! Colle un SMS Mobile Money ou envoie une capture d'écran. Je te dis en quelques secondes si c'est une arnaque.");
+</script>
+</div>
+</div>
+<%- include('partials/footer', { sansPied: true }) %>

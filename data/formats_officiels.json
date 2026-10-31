@@ -1,0 +1,17 @@
+{
+  "description": "Modèles anonymisés de SMS officiels T-Money et Moov Money (Togo). À compléter avec de vrais SMS anonymisés.",
+  "expediteurs_officiels": ["T-Money", "Tmoney", "Moov Money", "MoovMoney", "Flooz", "TogoCell", "Moov Africa"],
+  "exemples": [
+    "Transfert de 10 000 F effectue avec succes vers le 90 XX XX XX. Frais: 100 F. Solde: 45 500 F. Merci d\u0027utiliser T-Money.",
+    "Vous avez recu 25 000 F de 91 XX XX XX. Solde: 80 200 F. Merci d\u0027utiliser Moov Money.",
+    "Retrait de 15 000 F effectue avec succes. Solde: 12 000 F. Merci de votre confiance.",
+    "Paiement de 3 500 F chez [commercant]. Solde: 21 400 F. Merci d\u0027utiliser T-Money.",
+    "Recharge de credit: 1 000 F. Solde: 500 F. Transaction ID: XXXXXXXX."
+  ],
+  "regles": [
+    "Un SMS officiel annonce une opération déjà effectuée et donne le nouveau solde.",
+    "Un SMS officiel ne demande JAMAIS de renvoyer de l\u0027argent, de payer des frais ni de donner un code secret.",
+    "Un SMS officiel ne menace pas de suspendre ou de bloquer le compte.",
+    "Un SMS officiel n\u0027annonce jamais de gain de concours."
+  ]
+}

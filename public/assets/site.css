@@ -1,0 +1,76 @@
+/* Fraude Scanner – feuille de style des pages du site (hors chat). */
+
+:root {
+  --vert: #00144A; --vert-fonce: #00144A; --vert-clair: #EAF3FF; --jaune: #006FF2;
+  --encre: #000B28; --douce: #5A6785; --fond: #FFFFFF; --alt: #F6F9FF; --ligne: #DCE6F5;
+  --rouge: #B8302A; --orange: #C26A12; --ok: #1F7A3E;
+  --bs-primary: #006FF2; --bs-primary-rgb: 0, 111, 242;
+  --bs-link-color: #006FF2; --bs-link-color-rgb: 0, 111, 242;
+  --bs-link-hover-color: #005BC6; --bs-link-hover-color-rgb: 0, 91, 198;
+  --bs-code-color: #006FF2;
+  --bs-body-font-family: "Bricolage Grotesque", "Segoe UI", Arial, sans-serif;
+  --bs-body-color: #000B28; --bs-body-bg: #FFFFFF;
+}
+
+html, body { background: #FFFFFF; }
+main { overflow-x: clip; }
+body { color: var(--encre); font-family: var(--bs-body-font-family); }
+
+.btn-primary { --bs-btn-bg: #006FF2; --bs-btn-border-color: #006FF2; --bs-btn-hover-bg: #005BC6; --bs-btn-hover-border-color: #005BC6; --bs-btn-active-bg: #005BC6; --bs-btn-active-border-color: #005BC6; }
+.btn-outline-primary { --bs-btn-color: #006FF2; --bs-btn-border-color: #006FF2; --bs-btn-hover-bg: #006FF2; --bs-btn-hover-border-color: #006FF2; --bs-btn-active-bg: #005BC6; --bs-btn-active-border-color: #005BC6; }
+.btn-lg { font-weight: 500; }
+.accordion { --bs-accordion-active-bg: #EAF3FF; --bs-accordion-active-color: #0A52B8; --bs-accordion-btn-focus-box-shadow: 0 0 0 .2rem rgba(0,111,242,.25); --bs-accordion-border-color: #DCE6F5; }
+
+.site-nav { background: #fff; border-bottom: 1px solid var(--ligne); }
+.site-nav .navbar-brand { color: var(--encre); }
+.site-nav .nav-link { color: var(--douce); }
+.site-nav .nav-link:hover { color: var(--encre); }
+.site-nav .nav-link.active { color: var(--jaune); font-weight: 500; }
+.marque-logo { height: 40px; width: 40px; object-fit: contain; }
+
+.hero { position: relative; overflow: hidden; background: #fff; color: var(--encre); padding: 72px 0 84px; border-bottom: 1px solid var(--ligne); }
+.hero > .container { position: relative; z-index: 1; }
+.hero-fond { position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(600px 300px at 85% 20%, rgba(0,111,242,.10), transparent 60%),
+    radial-gradient(500px 260px at 70% 80%, rgba(0,111,242,.07), transparent 60%);
+}
+.hero h1 { font-weight: 700; line-height: 1.1; letter-spacing: -0.5px; }
+.hero .lead { color: var(--douce); max-width: 34rem; }
+.hero small { color: var(--douce); }
+
+.tel { background: #fff; color: var(--encre); border-radius: 28px; padding: 20px; max-width: 390px; margin: 0 auto; border: 1px solid var(--ligne); box-shadow: 0 18px 44px rgba(0,111,242,.12); }
+/* Carte en verre (effet « liquid glass » en CSS) sur le téléphone de l'accueil */
+.hero .tel { background: rgba(255,255,255,.58); border: 1px solid rgba(255,255,255,.85); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5); box-shadow: 0 24px 60px rgba(0,111,242,.18), inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 28px rgba(255,255,255,.35); transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s cubic-bezier(.22,1,.36,1); }
+.hero .tel:hover { transform: translateY(-4px); box-shadow: 0 30px 70px rgba(0,111,242,.24), inset 0 1px 0 rgba(255,255,255,.95), inset 0 0 32px rgba(255,255,255,.45); }
+.hero .tel .sms, .hero .tel .verdict { background: rgba(255,255,255,.85); }
+@media (prefers-reduced-motion: reduce) { .hero .tel { transition: none; } .hero .tel:hover { transform: none; } }
+.sms { background: var(--alt); border: 1px solid var(--ligne); border-radius: 14px 14px 14px 4px; padding: 10px 14px; font-size: 15px; }
+.verdict { border-radius: 14px; overflow: hidden; border: 1px solid var(--ligne); margin-top: 14px; }
+.verdict-tete { background: var(--rouge); color: #fff; padding: 10px 14px; font-weight: 700; }
+.verdict-corps { padding: 12px 14px; font-size: 15px; }
+.verdict-corps ul { margin: 6px 0 0; padding-left: 18px; }
+
+.section { padding: 64px 0; }
+.section-alt { background: var(--alt); border-top: 1px solid var(--ligne); border-bottom: 1px solid var(--ligne); }
+.titre-section { font-weight: 700; margin-bottom: 8px; }
+.sous-titre { color: var(--douce); max-width: 40rem; margin-bottom: 36px; }
+.carte-info { background: #fff; border: 1px solid var(--ligne); border-radius: 12px; padding: 24px; height: 100%; }
+.carte-info h3 { font-size: 1.15rem; font-weight: 700; }
+.etape-num { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--vert-clair); color: var(--jaune); font-weight: 700; flex-shrink: 0; }
+.pastille { display: inline-block; padding: 3px 12px; border-radius: 999px; color: #fff; font-weight: 700; font-size: 14px; }
+.bg-ok { background: var(--ok); } .bg-moyen { background: var(--orange); } .bg-danger2 { background: var(--rouge); }
+.entete-page { background: var(--alt); border-bottom: 1px solid var(--ligne); padding: 48px 0; }
+.entete-page h1 { font-weight: 700; margin: 0 0 6px; }
+.doc-menu { position: sticky; top: 24px; }
+.doc-menu .list-group-item.active, .doc-menu .list-group-item:hover { color: var(--jaune); }
+pre.code { background: var(--alt); color: var(--encre); border: 1px solid var(--ligne); padding: 16px; border-radius: 10px; overflow-x: auto; font-size: 14px; margin-bottom: 0; }
+.doc-bloc { margin-bottom: 48px; scroll-margin-top: 16px; }
+.doc-bloc h2 { font-size: 1.5rem; font-weight: 700; margin-bottom: 14px; }
+.todo { border: 1px dashed var(--jaune); background: var(--vert-clair); border-radius: 10px; padding: 14px 16px; }
+.site-footer { background: var(--alt); color: var(--douce); border-top: 1px solid var(--ligne); padding: 36px 0; }
+.site-footer a { color: var(--jaune); }
+.logo-a-propos { max-width: 200px; height: auto; }
+img.capture { width: 100%; border: 1px solid var(--ligne); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,111,242,.10); }
+
+.container { padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }

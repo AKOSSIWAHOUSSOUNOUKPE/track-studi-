@@ -1,0 +1,91 @@
+<%- include('partials/header', { titre: 'Accueil', actif: 'accueil', extraHead: '' }) %>
+
+<section class="hero">
+  <div class="hero-fond" aria-hidden="true"></div>
+  <div class="container">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <h1 class="display-4">Un doute sur un SMS Mobile Money ? Vérifie-le avant d'agir.</h1>
+        <p class="lead mt-3">Colle le message ou envoie une capture d'écran. En quelques secondes, tu sais s'il ressemble à une arnaque, avec des explications en français simple.</p>
+        <div class="d-flex flex-wrap gap-2 mt-4">
+          <a class="btn btn-primary btn-lg" href="/scanner">Analyser un SMS</a>
+          <a class="btn btn-outline-primary btn-lg" href="/comment-ca-marche">Voir comment ça marche</a>
+        </div>
+        <p class="mt-3 mb-0"><small>Sans inscription. Pour T-Money et Moov Money.</small></p>
+      </div>
+      <div class="col-lg-6">
+        <div class="tel" aria-label="Exemple d'analyse">
+          <div class="sms">Vous avez recu un depot de 50000F par erreur. Renvoyez-le vite au 90 00 00 00.</div>
+          <div class="verdict">
+            <div class="verdict-tete">Attention : arnaque !</div>
+            <div class="verdict-corps">
+              <strong>Pourquoi ?</strong>
+              <ul>
+                <li>Il demande de renvoyer l'argent</li>
+                <li>Il met la pression (« vite »)</li>
+                <li>Un vrai SMS ne demande jamais cela</li>
+              </ul>
+              <p class="mb-0 mt-2"><strong>Conseil :</strong> ne renvoie rien. Appelle ton opérateur.</p>
+            </div>
+          </div>
+          <p class="text-center text-muted small mt-3 mb-0">Exemple inventé</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <h2 class="titre-section">Les pièges qu'on voit tous les jours</h2>
+    <p class="sous-titre">Les arnaques par SMS et appels falsifiés touchent beaucoup de monde au Togo, surtout dans le secteur informel. Voici trois scénarios classiques.</p>
+    <div class="row g-4">
+      <div class="col-md-4"><div class="carte-info"><h3>Le dépôt « par erreur »</h3><p class="mb-0">Un message dit que de l'argent est arrivé par erreur et te demande de le renvoyer très vite.</p></div></div>
+      <div class="col-md-4"><div class="carte-info"><h3>Le faux concours</h3><p class="mb-0">Tu as « gagné » un gros prix, mais il faut d'abord payer des frais ou donner un code.</p></div></div>
+      <div class="col-md-4"><div class="carte-info"><h3>La fausse tontine</h3><p class="mb-0">On te promet un gain en groupe, puis on te demande de l'argent pour « débloquer » ta part.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt">
+  <div class="container">
+    <h2 class="titre-section">Comment l'appli te protège</h2>
+    <p class="sous-titre">Trois étapes, sans rien installer.</p>
+    <div class="row g-4">
+      <div class="col-md-4"><div class="carte-info"><span class="etape-num mb-3">1</span><h3>Tu envoies le message</h3><p class="mb-0">Tu colles le SMS ou tu joins une capture d'écran.</p></div></div>
+      <div class="col-md-4"><div class="carte-info"><span class="etape-num mb-3">2</span><h3>Gemma l'analyse</h3><p class="mb-0">Elle lit le message, repère le montant, l'expéditeur et les signes d'arnaque, puis le compare aux formats officiels.</p></div></div>
+      <div class="col-md-4"><div class="carte-info"><span class="etape-num mb-3">3</span><h3>Tu reçois une alerte claire</h3><p class="mb-0">Vert, orange ou rouge, avec les raisons et un conseil pratique.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <h2 class="titre-section">Et pour réviser tes cours</h2>
+        <p>En plus du scanner, un mode apprentissage t'aide à réviser. Il ne s'active que si tu tapes une commande qui commence par <code>/</code>. Sans commande, l'appli reste un scanner d'arnaques.</p>
+        <a class="btn btn-primary" href="/comment-ca-marche#apprentissage">Voir les commandes</a>
+      </div>
+      <div class="col-lg-6">
+        <div class="carte-info">
+          <p class="mb-2"><code>/apprendre</code> envoie ton cours</p>
+          <p class="mb-2"><code>/resume</code> fait un résumé</p>
+          <p class="mb-2"><code>/plan</code> crée un programme de révision</p>
+          <p class="mb-2"><code>/quiz</code> pose des questions</p>
+          <p class="mb-0"><code>/stop</code> revient au scanner</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt text-center">
+  <div class="container">
+    <h2 class="titre-section">Tu as reçu un message louche ?</h2>
+    <p class="sous-titre mx-auto">Vérifie-le maintenant, avant de répondre ou de renvoyer de l'argent.</p>
+    <a class="btn btn-primary btn-lg" href="/scanner">Analyser un SMS</a>
+  </div>
+</section>
+
+<%- include('partials/footer') %>
